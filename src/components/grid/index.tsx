@@ -39,10 +39,14 @@ const Index = ():any => {
   const editHandler =(item:any) =>{
       setEditData(item);
   }
+  console.log("Before: "+data);
+  const saveDataHandler=(updatedData: Employee)=>{
+    setData((prevData) =>
+      prevData.map((item) => (item.id === updatedData.id ? { ...item, ...updatedData } : item))
+    );
+  }
 
-
-
-
+  console.log("After: "+ data[0]);
 
 
 
@@ -62,14 +66,14 @@ const Index = ():any => {
                 <p>{item.contactNumber}</p>
                 <p>{item.dob}</p>
                 <p>{item.email}</p>
-                <button onClick={()=>editHandler(item)}>Edit</button>
+                <button onClick={()=>editHandler(item)} className="button-login">Edit</button>
               </div>
             ))}
             </div>
           
           </div>
           <div className="grid-form">
-            <Form editData={editData}></Form>
+            <Form editData={editData} saveData={saveDataHandler}></Form>
           </div>
         </div>)
 
