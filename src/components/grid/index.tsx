@@ -2,9 +2,26 @@ import { useEffect, useState } from "react";
 import Form from "../form/form";
 import "./index.css";
 const Index = ():any => {
-  const [data, setData] = useState({});
+  interface Employee {
+    id: number;
+    firstName: string;
+    lastName: string;
+    address:string;
+    age:number;
+    contactNumber:string;
+    dob:string;
+    email:string;
+    imageUrl:string;
+    salary:number;
+  }
+  
+  const [data, setData] = useState<Employee[]>([]);
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
+
+  const [editData,setEditData] = useState<Employee[]>([]);
+
+
 
   useEffect(() => {
     fetch("https://hub.dummyapis.com/employee?noofRecords=10&idStarts=1001")
@@ -17,26 +34,47 @@ const Index = ():any => {
       });
   }, []);
 
-  console.log(data);
+
+
+  const editHandler =(item:any) =>{
+      setEditData(item);
+  }
+
+
+
+
+
+
+
 
   return (
     <>
-      <div className="row">
-        <div className="grid">
-            {Object.keys(data).map(item=>{
-                return(
-                    <div>
-                        <p>
-                        {[item] : data[item as keyof typeof data] }
-                        </p>
-                    </div>
-                )
-            })}
-        </div>
-        <div className="grid">
-          <Form></Form>
-        </div>
-      </div>
+    {error? <h1>Please wait or refresh</h1>:
+          (<div className="row">
+        
+          <div className="grid-data">
+            <h1>API Data</h1>
+            <div className="row-card">
+            {data.map((item) => (
+              <div key={item.id} className="card">
+                <p>{item.firstName}</p>
+                <p>{item.age}</p>
+                <p>{item.contactNumber}</p>
+                <p>{item.dob}</p>
+                <p>{item.email}</p>
+                <button onClick={()=>editHandler(item)}>Edit</button>
+              </div>
+            ))}
+            </div>
+          
+          </div>
+          <div className="grid-form">
+            <Form editData={editData}></Form>
+          </div>
+        </div>)
+
+        }
+      
     </>
   );
 };

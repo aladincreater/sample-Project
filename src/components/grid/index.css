@@ -3,7 +3,36 @@
     flex-direction: row;
     width: 100%;
 }
-.grid{
+.grid-form{
     border: 2px solid black;
-    margin:20%;
+    height:40vh;
+    position:-webkit-sticky;
+    width: 380px;
 }
+.grid-data{
+    border: 2px solid black;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 5%;
+    padding: 10px 10px 10px 10px;
+    width: 900px;
+}
+.row-card{
+    display: table;
+    flex-direction: column;
+    width: 100%;
+}
+.card{
+    box-shadow: 0 2px 5px 0 rgba(247, 245, 245, 0.927);
+    transition: 0.3s;
+    padding: 10px 10px 10px 10px;
+    float: left;
+  width: 33.33%;
+  padding: 10px;
+  height: 300px;
+  margin: 7%;
+
+}
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgb(241, 238, 238);
+  }
