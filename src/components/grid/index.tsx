@@ -45,8 +45,13 @@ const Index = ():any => {
       prevData.map((item) => (item.id === updatedData.id ? { ...item, ...updatedData } : item))
     );
   }
+  const deleteHandler=(updatedData: Employee)=>{
+    setData((prevData) =>
+      prevData.filter((item) => item.id !== updatedData.id)
+    );
+  }
 
-  console.log("After: "+ data[0]);
+  console.log("After: "+ data);
 
 
 
@@ -67,6 +72,7 @@ const Index = ():any => {
                 <p>{item.dob}</p>
                 <p>{item.email}</p>
                 <button onClick={()=>editHandler(item)} className="button-login">Edit</button>
+                <button className="button-login" onClick={()=>deleteHandler(item)}>Delete</button>
               </div>
             ))}
             </div>
