@@ -26,7 +26,7 @@ const Form = (props: any): JSX.Element => {
     }
   }, [props.editData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Employee) => {
+  const handleChange = (e: any, field: keyof Employee) => {
     if (formData) {
       setFormData({ ...formData, [field]: e.target.value });
     } else {

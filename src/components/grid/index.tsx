@@ -1,91 +1,106 @@
 import { useEffect, useState } from "react";
 import Form from "../form/form";
 import "./index.css";
-const Index = ():any => {
+
+const Index = (): JSX.Element => {
   interface Employee {
     id: number;
     firstName: string;
     lastName: string;
-    address:string;
-    age:number;
-    contactNumber:string;
-    dob:string;
-    email:string;
-    imageUrl:string;
-    salary:number;
+    address: string;
+    age: number;
+    contactNumber: string;
+    dob: string;
+    email: string;
+    imageUrl: string;
+    salary: number;
   }
-  
+
   const [data, setData] = useState<Employee[]>([]);
-
   const [error, setError] = useState<string>("");
-
-  const [editData,setEditData] = useState<Employee[]>([]);
-
-
+  const [editData, setEditData] = useState<Employee | null>(null);
+  const [sortOption, setSortOption] = useState<keyof Employee>("firstName");
 
   useEffect(() => {
     fetch("https://hub.dummyapis.com/employee?noofRecords=10&idStarts=1001")
-      .then((res) => {
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((result) => setData(result))
-      .catch((err) => {
-        setError(err);
-      });
+      .catch((err) => setError(err));
   }, []);
 
+  const editHandler = (item: Employee): void => {
+    setEditData(item);
+  };
 
-
-  const editHandler =(item:any) =>{
-      setEditData(item);
-  }
-  console.log("Before: "+data);
-  const saveDataHandler=(updatedData: Employee)=>{
+  const saveDataHandler = (updatedData: Employee): void => {
     setData((prevData) =>
       prevData.map((item) => (item.id === updatedData.id ? { ...item, ...updatedData } : item))
     );
-  }
-  const deleteHandler=(updatedData: Employee)=>{
-    setData((prevData) =>
-      prevData.filter((item) => item.id !== updatedData.id)
-    );
-  }
+    setEditData(null);
+  };
 
-  console.log("After: "+ data);
+  const deleteHandler = (item: Employee): void => {
+    setData((prevData) => prevData.filter((dataItem) => dataItem.id !== item.id));
+    setEditData(null);
+  };
 
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    setSortOption(e.target.value as keyof Employee);
+  };
 
-
+  const sortedData = [...data].sort((a, b) => {
+    if (a[sortOption] < b[sortOption]) {
+      return -1;
+    }
+    if (a[sortOption] > b[sortOption]) {
+      return 1;
+    }
+    return 0;
+  });
 
   return (
     <>
-    {error? <h1>Please wait or refresh</h1>:
-          (<div className="row">
-        
+      {error ? (
+        <h1>Please wait or refresh</h1>
+      ) : (
+        <div className="row">
           <div className="grid-data">
             <h1>API Data</h1>
-            <div className="row-card">
-            {data.map((item) => (
-              <div key={item.id} className="card">
-                <p>{item.firstName}</p>
-                <p>{item.age}</p>
-                <p>{item.contactNumber}</p>
-                <p>{item.dob}</p>
-                <p>{item.email}</p>
-                <button onClick={()=>editHandler(item)} className="button-login">Edit</button>
-                <button className="button-login" onClick={()=>deleteHandler(item)}>Delete</button>
-              </div>
-            ))}
+            <div>
+              <label>Sort by:</label>
+              <select onChange={handleSortChange} value={sortOption}>
+                <option value="firstName">First Name</option>
+                <option value="contactNumber">Contact Number</option>
+                <option value="age">Age</option>
+                <option value="dob">Date Of Birth</option>
+                <option value="email">Email</option>
+              </select>
             </div>
-          
+            <div className="row-card">
+              {sortedData.map((item) => (
+                <div key={item.id} className="card">
+                  <p>{item.firstName}</p>
+                  <p>{item.age}</p>
+                  <p>{item.contactNumber}</p>
+                  <p>{item.dob}</p>
+                  <p>{item.email}</p>
+                  <button onClick={() => editHandler(item)} className="button-login">
+                    Edit
+                  </button>
+                  <button className="button-login" onClick={() => deleteHandler(item)}>
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
           <div className="grid-form">
-            <Form editData={editData} saveData={saveDataHandler}></Form>
+            <Form editData={editData} saveData={saveDataHandler} />
           </div>
-        </div>)
-
-        }
-      
+        </div>
+      )}
     </>
   );
 };
+
 export default Index;
