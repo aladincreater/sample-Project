@@ -4,13 +4,13 @@
     width: 100%;
 }
 .grid-form{
-    border: 2px solid black;
+    border: 3px solid green;
     height:40vh;
     position:-webkit-sticky;
     width: 380px;
 }
 .grid-data{
-    border: 2px solid black;
+    border: 3px solid green;
     margin-left: 5%;
     margin-right: 5%;
     margin-bottom: 5%;
@@ -29,7 +29,7 @@
     float: left;
   width: 33.33%;
   padding: 10px;
-  height: 300px;
+  height: 400px;
   margin: 7%;
 
 }

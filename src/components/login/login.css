@@ -26,3 +26,9 @@
     font-family: cursive;
     font-size: medium;
 }
+.button-logout{
+    float:right;
+    margin-right:13%;
+    margin-top:-3.5%;
+
+}

@@ -1,0 +1,15 @@
+.row-form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.form-child{
+    margin-top:23px;
+}
+#age,#firstname{
+    float:right;
+}
+.button-alignment{
+    justify-content: center;
+    margin-left:35%;
+}

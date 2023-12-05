@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import './form.css';
+
 
 const Form = (props: any): JSX.Element => {
   interface Employee {
@@ -27,8 +29,14 @@ const Form = (props: any): JSX.Element => {
   }, [props.editData]);
 
   const handleChange = (e: any, field: keyof Employee) => {
+    console.log("event value: "+e.target.value)
     if (formData) {
-      setFormData({ ...formData, [field]: e.target.value });
+      if(e.target.value){
+        setFormData({ ...formData, [field]: e.target.value });
+      }
+      else{
+        alert(field +" field Cannot be empty")
+      }
     } else {
       console.error("formData is null");
     }
@@ -39,8 +47,8 @@ const Form = (props: any): JSX.Element => {
     return <div>No data to display</div>;
   }
 
-  const saveData = () => {
-
+  const saveData = (e:any) => {
+    e.preventDefault();
     console.log("Saved Data:", { ...props.editData, ...formData });
 
     props.saveData({ ...props.editData, ...formData });
@@ -48,36 +56,38 @@ const Form = (props: any): JSX.Element => {
   };
 
   return (
-    <form>
-      <div>
+    <form onSubmit={saveData} className="row-form">
+      <div className="form-child">
         <label>FirstName</label>
         <input
           type="text"
           value={formData.firstName}
+          id="firstname"
           onChange={(e) => handleChange(e, "firstName")}
         />
       </div>
-      <div>
+      <div className="form-child">
         <label>Age</label>
-        <input type="number" value={formData.age} onChange={(e) => handleChange(e, "age")} />
+        <input type="number" id="age" value={formData.age} onChange={(e) => handleChange(e, "age")} />
       </div>
-      <div>
+      <div className="form-child">
         <label>ContactNumber</label>
         <input
           type="text"
+          id="firstname"
           value={formData.contactNumber}
           onChange={(e) => handleChange(e, "contactNumber")}
         />
       </div>
-      <div>
+      <div className="form-child">
         <label>Date Of Birth</label>
-        <input type="text" value={formData.dob} onChange={(e) => handleChange(e, "dob")} />
+        <input type="text" id="firstname" value={formData.dob} onChange={(e) => handleChange(e, "dob")} />
       </div>
-      <div>
+      <div className="form-child">
         <label>Email</label>
-        <input type="email" value={formData.email} onChange={(e) => handleChange(e, "email")} />
+        <input type="email" id="firstname" value={formData.email} onChange={(e) => handleChange(e, "email")} />
       </div>
-      <button type="button" onClick={saveData}  className="button-login">
+      <button type="submit" className="button-login button-alignment">
         Save
       </button>
     </form>

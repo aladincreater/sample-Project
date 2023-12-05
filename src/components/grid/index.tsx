@@ -35,13 +35,17 @@ const Index = (): JSX.Element => {
 
   const saveDataHandler = (updatedData: Employee): void => {
     setData((prevData) =>
-      prevData.map((item) => (item.id === updatedData.id ? { ...item, ...updatedData } : item))
+      prevData.map((item) =>
+        item.id === updatedData.id ? { ...item, ...updatedData } : item
+      )
     );
     setEditData(null);
   };
 
   const deleteHandler = (item: Employee): void => {
-    setData((prevData) => prevData.filter((dataItem) => dataItem.id !== item.id));
+    setData((prevData) =>
+      prevData.filter((dataItem) => dataItem.id !== item.id)
+    );
     setEditData(null);
   };
 
@@ -80,17 +84,41 @@ const Index = (): JSX.Element => {
             <div className="row-card">
               {sortedData.map((item) => (
                 <div key={item.id} className="card">
-                  <p>{item.firstName}</p>
-                  <p>{item.age}</p>
-                  <p>{item.contactNumber}</p>
-                  <p>{item.dob}</p>
-                  <p>{item.email}</p>
-                  <button onClick={() => editHandler(item)} className="button-login">
+                  <div className="form-child">
+                    <label><b>First Name :</b></label>
+                    {item.firstName}
+                  </div>
+                  <div className="form-child">
+                    <label><b>Age :</b></label>
+                    {item.age}
+                  </div>
+                  <div className="form-child">
+                    <label><b>Contact Number :</b></label>
+                    {item.contactNumber}
+                  </div>
+                  <div className="form-child">
+                    <label><b>Date Of Birth :</b></label>
+                    {item.dob}
+                  </div> 
+                  <div className="form-child">
+                    <label><b>Email Address </b></label>
+                    {item.email}
+                  </div>
+                  <div className="form-child">
+                  <button
+                    onClick={() => editHandler(item)}
+                    className="button-login"
+                  >
                     Edit
                   </button>
-                  <button className="button-login" onClick={() => deleteHandler(item)}>
+                  <button
+                    className="button-login"
+                    onClick={() => deleteHandler(item)}
+                  >
                     Delete
                   </button>
+                  </div>                
+                 
                 </div>
               ))}
             </div>
