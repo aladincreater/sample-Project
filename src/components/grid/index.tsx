@@ -26,6 +26,7 @@ const Index = (): JSX.Element => {
       .then((res) => res.json())
       .then((result) => setData(result))
       .catch((err) => setError(err));
+      
   }, []);
 
   const editHandler = (item: Employee): void => {
@@ -62,7 +63,7 @@ const Index = (): JSX.Element => {
     <>
       {error ? (
         <h1>Please wait or refresh</h1>
-      ) : (
+      ) : data ? (
         <div className="row">
           <div className="grid-data">
             <h1>API Data</h1>
@@ -98,7 +99,8 @@ const Index = (): JSX.Element => {
             <Form editData={editData} saveData={saveDataHandler} />
           </div>
         </div>
-      )}
+      ) : <h1>There is no data Available</h1>
+    }
     </>
   );
 };
