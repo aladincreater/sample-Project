@@ -1,6 +1,6 @@
 import "./App.css";
 import Home from "./Home";
-import { Authentication, useAuth } from "./authContext";
+import { Authentication } from "./authContext";
 import { Flow } from "./components/flow/flow";
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
           <Home />
       </Authentication>
       <div className="flow">
-
+     
       <Flow></Flow>
       </div>
 

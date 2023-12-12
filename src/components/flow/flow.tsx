@@ -1,14 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ReactFlow, {
   addEdge,
-  FitViewOptions,
   applyNodeChanges,
   applyEdgeChanges,
   Node,
   Edge,
-  NodeChange,
-  EdgeChange,
-  Connection,
   OnNodesChange,
   OnEdgesChange,
   OnConnect,
@@ -16,33 +12,9 @@ import ReactFlow, {
   MiniMap,
   Background,
 } from "reactflow";
-
 import "reactflow/dist/style.css";
-
-const initialNodes: any = [
-  {
-    id: "1",
-    position: { x: 0, y: 0 },
-    data: { label: "1", value: "10" },
-    sourcePosition: "right",
-  },
-  {
-    id: "2",
-    position: { x: 0, y: 200 },
-    data: { label: "2", value: "10" },
-    sourcePosition: "right",
-  },
-  {
-    id: "3",
-    position: { x: 300, y: 0 },
-    data: { label: "3", value: "0" },
-    targetPosition: "left",
-  },
-];
-const initialEdges = [
-  { id: "1-3", source: "1", target: "3" },
-  { id: "2-3", source: "2", target: "3" },
-];
+import { initialNodes, initialEdges } from "./initiaalNode";
+import { connect } from "http2";
 
 export const Flow = (): any => {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
@@ -56,51 +28,136 @@ export const Flow = (): any => {
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [setEdges]
   );
+
+  const isNodeAlreadyConnected = (nodeId: string): any => {
+    return edges.some((el) => el.source == nodeId || el.target == nodeId);
+  };
+
   const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
+    (connection: any) => {
+      if (
+        connection.source !== "add" ||
+        connection.source !== "subtract" ||
+        connection.source !== "multiply"
+      ) {
+        if (isNodeAlreadyConnected(connection.source)) {
+          return;
+        }
+        if (isNodeAlreadyConnected(connection.target)) {
+          return;
+        }
+        setEdges((prev: Edge[]): any => applyEdgeChanges(connection, prev));
+      }
+    },
     [setEdges]
   );
 
-  const value = (): any => {
-    let a: any = [];
-    let count = 0;
-    edges.map((item: any, key): any => {
-      // console.log(item,key);
-      if ("2-3" === item.id || "1-3" === item.id) a = [...a, item.source];
+  let a: any = [];
+  let b: any = [];
+  let c: any = [];
+  let countAdd = 0;
+  let countSub = 0;
+  let countMultiply = 1;
+
+  edges.map((item: any, key): any => {
+    if (item.target === "add") {
+      a = [...a, item.source];
+    } else if (item.target === "subtract") {
+      b = [...b, item.source];
+    } else if (item.target === "multiply") {
+      c = [...c, item.source];
+    }
+  });
+
+  nodes?.map((item, key) => {
+    a.map((i: any, k: any) => {
+      if (i === item.id) {
+        countAdd = countAdd + Number(item.data.value);
+      }
     });
-    console.log(nodes);
-    nodes?.map((item, key) => {
-      // console.log(item,key);
-      a.map((i: any, k: any) => {
-        if (i === item.id) {
-          count = count + Number(item.data.value);
-        }
-      });
-      if (item.id === "1") {
-        setNodes(
-          (nds): any => (nds[key].data.value = count)
-          //   [...nds, (nds[key].data.value =count)]
+    b.map((i: any, k: any) => {
+      if (i === item.id) {
+        countSub = Number(item.data.value) - countSub;
+      }
+    });
+    c.map((i: any, k: any) => {
+      if (i === item.id) {
+        countMultiply = Number(item.data.value) * countMultiply;
+      }
+    });
+  });
+
+  useEffect(() => {
+    edges.map((l: any, p): any => {
+      if (
+        l.target == "1" ||
+        l.target == "2" ||
+        l.target == "3" ||
+        l.target == "4" ||
+        l.target == "5"
+      ) {
+        setNodes((nds): any =>
+          nds.map((node, idx) => {
+            if (node.id == l.target) {
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  value:
+                    l.source == "add"
+                      ? countAdd
+                      : l.source == "subtract"
+                      ? countSub
+                      : l.source == "multiply"
+                      ? countMultiply
+                      : 0,
+                },
+              };
+            } else {
+              return node;
+            }
+          })
         );
       }
     });
+  }, [edges]);
+
+  const updateInputNodeHandler = () => {
+    const updateNode: any = {
+      id: (nodes.length + 1).toString(),
+      position: { x: 0, y: 0 },
+      data: { label: `Node ${nodes.length + 1}`, value: "2" },
+      sourcePosition: "right",
+    };
+    setNodes((els) => [...els, updateNode]);
   };
 
-  const dots: any = "lines";
+  // console.log(nodes)
+  console.log(edges);
   return (
-    <div style={{ width: "inherit", height: "inherit" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
+    <>
+      <div>
+        <button onClick={updateInputNodeHandler}>Add new input node</button>
+      </div>
+      <div
+        style={{
+          width: "inherit",
+          height: "inherit",
+          border: "3px solid black",
+        }}
       >
-        <Controls />
-        <MiniMap />
-        <Background variant={dots} gap={12} size={1} />
-      </ReactFlow>
-
-      <button onClick={value}>Click</button>
-    </div>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+        >
+          <Controls />
+          <MiniMap />
+          <Background gap={12} size={1} />
+        </ReactFlow>
+      </div>
+    </>
   );
 };
