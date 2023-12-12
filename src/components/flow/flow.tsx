@@ -1,57 +1,33 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import ReactFlow, {
-  addEdge,
-  applyNodeChanges,
-  applyEdgeChanges,
-  Node,
-  Edge,
-  OnNodesChange,
-  OnEdgesChange,
+    addEdge,
   OnConnect,
   Controls,
   MiniMap,
   Background,
+  useNodesState,
+  useEdgesState,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { initialNodes, initialEdges } from "./initiaalNode";
-import { connect } from "http2";
+import { initialNodes } from "./initiaalNode";
+import CustomNode from './customNode';
+
+const nodeTypes = {
+    custom: CustomNode,
+};
 
 export const Flow = (): any => {
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const [nodes, setNodes,onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges,onEdgesChange] = useEdgesState([]);
 
-  const onNodesChange: OnNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [setNodes]
-  );
-  const onEdgesChange: OnEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+
+  const onConnect: OnConnect =
+   useCallback(
+    (params) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
 
-  const isNodeAlreadyConnected = (nodeId: string): any => {
-    return edges.some((el) => el.source == nodeId || el.target == nodeId);
-  };
-
-  const onConnect: OnConnect = useCallback(
-    (connection: any) => {
-      if (
-        connection.source !== "add" ||
-        connection.source !== "subtract" ||
-        connection.source !== "multiply"
-      ) {
-        if (isNodeAlreadyConnected(connection.source)) {
-          return;
-        }
-        if (isNodeAlreadyConnected(connection.target)) {
-          return;
-        }
-        setEdges((prev: Edge[]): any => applyEdgeChanges(connection, prev));
-      }
-    },
-    [setEdges]
-  );
-
+  
   let a: any = [];
   let b: any = [];
   let c: any = [];
@@ -126,14 +102,15 @@ export const Flow = (): any => {
     const updateNode: any = {
       id: (nodes.length + 1).toString(),
       position: { x: 0, y: 0 },
+      type:'custom',
       data: { label: `Node ${nodes.length + 1}`, value: "2" },
-      sourcePosition: "right",
     };
     setNodes((els) => [...els, updateNode]);
   };
+  
+ 
 
-  // console.log(nodes)
-  console.log(edges);
+  console.log(nodes)
   return (
     <>
       <div>
@@ -152,6 +129,7 @@ export const Flow = (): any => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          nodeTypes ={nodeTypes}
         >
           <Controls />
           <MiniMap />
@@ -161,3 +139,4 @@ export const Flow = (): any => {
     </>
   );
 };
+export default Flow;

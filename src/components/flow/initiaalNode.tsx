@@ -34,6 +34,7 @@ export const initialNodes: any = [
       data: { label: "5", value: "10" },
       targetPosition: "left",
     },
+
     {
       id: "add",
       position: { x: 600, y: 200 },
@@ -51,10 +52,11 @@ export const initialNodes: any = [
     {
       id: "multiply",
       position: { x: 600, y: 400 },
+      type:'',
       data: { label: "Multiplication", value: "10" },
       targetPosition: "left",
       sourcePosition: "right",
     },
+   
   ];
   
-export const initialEdges: any = [{ id: "0", source: "0", target: "0" }];

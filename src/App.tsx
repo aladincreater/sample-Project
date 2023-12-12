@@ -1,7 +1,8 @@
 import "./App.css";
 import Home from "./Home";
 import { Authentication } from "./authContext";
-import { Flow } from "./components/flow/flow";
+import Flow from "./components/flow/flow";
+
 
 function App() {
   return (
